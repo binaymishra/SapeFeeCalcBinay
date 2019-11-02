@@ -3,7 +3,8 @@
  */
 package com.calculator.fee;
 
-import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,42 +13,35 @@ import java.util.List;
 
 public class Application {
 
+    final static Logger LOGGER = LoggerFactory.getLogger(GenerateReport.class);
 
 
     public static void main(String[] args) {
 
-
-
+        //0. Read Csv file
         TransactionReader transactionReader = new CsvTransactionReader();
         try {
+            //1. Read file
             List<Transaction> transactions = transactionReader.read(args[0]);
-            if(!transactions.isEmpty()) {
-                FeeCalculatorImpl feeCalculator = new FeeCalculatorImpl();
-                List<Transaction> report  = feeCalculator.calculateFee(transactions);
-                try (PrintWriter writer = new PrintWriter(new File("Sample_Output.csv"))) {
-                    StringBuilder sb = new StringBuilder();
-                    String header = StringUtils.joinWith(",",
-                            "Client Id",
-                            "Transaction Type",
-                            "Transaction Date",
-                            "Priority",
-                            "Processing Fee", "\n");
-                    sb.append(header);
-                    for (Transaction transaction : report) {
-                        String data = StringUtils.joinWith(",",
-                                transaction.getClientId(),
-                                transaction.getTransactionType(),
-                                transaction.getTransactionDate(),
-                                transaction.getPriorityFlag(),
-                                transaction.getFee(), "\n");
-                        sb.append(data);
-                    }
 
-                    writer.write(sb.toString());
+            //2. If found Record
+            if(!transactions.isEmpty()) {
+
+                //3. Create Feecalculator
+                FeeCalculatorImpl feeCalculator = new FeeCalculatorImpl();
+
+                //4. Inject FeeCalculator in to GenerateReport
+                GenerateReport generateReport = new GenerateReport(feeCalculator);
+
+                try (PrintWriter writer = new PrintWriter(new File("Sample_Output.csv"))) {
+                    //Return CSV as String tobe written in file
+                    writer.write(generateReport.generateReport(transactions));
                 }
+            } else {
+                LOGGER.info("No Transaction record found. in file : {}", args[0]);
             }
         } catch (IOException e) {
-            System.err.println("Input Data.csv not found in current folder. Please Place 'Input Data.csv' in  current folder");
+            LOGGER.error("Input Data.csv not found in current folder. Please Place 'Input Data.csv' in  current folder");
         }
     }
 
