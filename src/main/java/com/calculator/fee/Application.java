@@ -3,12 +3,23 @@
  */
 package com.calculator.fee;
 
+import java.io.IOException;
+import java.util.List;
+
 public class Application {
-    public String getGreeting() {
-        return "Hello world.";
+    public static void main(String[] args) {
+        TransactionReader transactionReader = new CsvTransactionReader();
+        try {
+            List<Transaction> transactions = transactionReader.read("Input Data.csv");
+            if(!transactions.isEmpty()) {
+                FeeCalculatorImpl feeCalculator = new FeeCalculatorImpl();
+                List<Transaction> report  = feeCalculator.calculateFee(transactions);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    public static void main(String[] args) {
-        System.out.println(new Application().getGreeting());
-    }
+
+
 }
