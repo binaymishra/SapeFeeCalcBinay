@@ -3,12 +3,17 @@ package com.calculator.fee;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class FeeCalculatorImplTest {
+
+    final static Logger LOGGER = LoggerFactory.getLogger(FeeCalculatorImplTest.class);
 
     private FeeCalculator feeCalculator;
 
@@ -162,6 +167,8 @@ public class FeeCalculatorImplTest {
 
         Assert.assertEquals(BigDecimal.valueOf(50.0), report.get(0).getFee());
         Assert.assertEquals(BigDecimal.valueOf(50.0), report.get(1).getFee());
+
+        LOGGER.trace(report.get(0).toString());
 
     }
 }
