@@ -12,6 +12,9 @@ plugins {
 
     // Apply the application plugin to add support for building an application
     id 'application'
+
+    //Sonar
+    id 'jacoco'
 }
 
 repositories {
@@ -29,5 +32,20 @@ dependencies {
     testImplementation 'junit:junit:4.12'
 }
 
+jar {
+    manifest {
+        attributes(
+                'Class-Path': configurations.compile.collect { it.getName() }.join(' '),
+                'Main-Class': 'com.calculator.fee.Application'
+                
+        )
+    }
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
 // Define the main class for the application
 mainClassName = 'com.calculator.fee.Application'
+
+
