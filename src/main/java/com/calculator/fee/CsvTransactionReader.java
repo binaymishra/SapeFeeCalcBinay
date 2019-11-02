@@ -1,6 +1,4 @@
-package com.calculator.fee.reader;
-
-import com.calculator.fee.model.Transaction;
+package com.calculator.fee;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;

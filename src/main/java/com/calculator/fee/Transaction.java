@@ -1,6 +1,7 @@
-package com.calculator.fee.model;
+package com.calculator.fee;
 
 
+import java.math.BigDecimal;
 import java.util.Objects;
 
 /**
@@ -15,6 +16,8 @@ public class Transaction {
     private String transactionDate = "";
     private String marketValue = "";
     private String priorityFlag = "";
+
+    private BigDecimal fee = BigDecimal.ZERO;
 
     public Transaction() {
         // Default constructor
@@ -77,6 +80,14 @@ public class Transaction {
         this.priorityFlag = priorityFlag;
     }
 
+    public BigDecimal getFee() {
+        return fee;
+    }
+
+    public void setFee(BigDecimal fee) {
+        this.fee = fee;
+    }
+
     @Override
     public String toString() {
         return "Transaction{" +
@@ -87,27 +98,7 @@ public class Transaction {
                 ", transactionDate='" + transactionDate + '\'' +
                 ", marketValue='" + marketValue + '\'' +
                 ", priorityFlag='" + priorityFlag + '\'' +
+                ", fee=" + fee +
                 '}';
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Transaction that = (Transaction) o;
-        return externalTransactionId.equals(that.externalTransactionId) &&
-                clientId.equals(that.clientId) &&
-                securityId.equals(that.securityId) &&
-                transactionType.equals(that.transactionType) &&
-                transactionDate.equals(that.transactionDate) &&
-                marketValue.equals(that.marketValue) &&
-                priorityFlag.equals(that.priorityFlag);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(externalTransactionId, clientId, securityId, transactionType, transactionDate, marketValue, priorityFlag);
-    }
-
-
 }
