@@ -3,20 +3,51 @@
  */
 package com.calculator.fee;
 
+import org.apache.commons.lang3.StringUtils;
+
+import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.List;
 
 public class Application {
+
+
+
     public static void main(String[] args) {
+
+
+
         TransactionReader transactionReader = new CsvTransactionReader();
         try {
-            List<Transaction> transactions = transactionReader.read("Input Data.csv");
+            List<Transaction> transactions = transactionReader.read(args[0]);
             if(!transactions.isEmpty()) {
                 FeeCalculatorImpl feeCalculator = new FeeCalculatorImpl();
                 List<Transaction> report  = feeCalculator.calculateFee(transactions);
+                try (PrintWriter writer = new PrintWriter(new File("Sample_Output.csv"))) {
+                    StringBuilder sb = new StringBuilder();
+                    String header = StringUtils.joinWith(",",
+                            "Client Id",
+                            "Transaction Type",
+                            "Transaction Date",
+                            "Priority",
+                            "Processing Fee", "\n");
+                    sb.append(header);
+                    for (Transaction transaction : report) {
+                        String data = StringUtils.joinWith(",",
+                                transaction.getClientId(),
+                                transaction.getTransactionType(),
+                                transaction.getTransactionDate(),
+                                transaction.getPriorityFlag(),
+                                transaction.getFee(), "\n");
+                        sb.append(data);
+                    }
+
+                    writer.write(sb.toString());
+                }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Input Data.csv not found in current folder. Please Place 'Input Data.csv' in  current folder");
         }
     }
 
